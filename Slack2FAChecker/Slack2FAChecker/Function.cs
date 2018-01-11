@@ -77,26 +77,32 @@ namespace Slack2FAChecker
 
 			string postMessage;
 			if (no2FaUserNames.Any())
-				postMessage = "2FA 無効ユーザ" + Environment.NewLine + string.Join(",", no2FaUserNames);
-			else
-				postMessage = "2FA が無効のユーザはいません！セキュアデス！";
-
-			using (var httpClient = new HttpClient())
 			{
-				var postJson = JsonConvert.SerializeObject(new
+				postMessage = "2FA 無効ユーザ" + Environment.NewLine + string.Join(",", no2FaUserNames);
+				using (var httpClient = new HttpClient())
 				{
-					text = postMessage
-				});
+					var postJson = JsonConvert.SerializeObject(new
+					{
+						text = postMessage
+					});
 
-				using (var content = new StringContent(postJson, Encoding.UTF8, "application/json"))
-				{
-					var requestContentText = await content.ReadAsStringAsync();
-					context.Logger.LogLine(requestContentText);
-					var response = await httpClient.PostAsync(eventData.SlackWebhookUrl, content);
-					var responseContentText = await response.Content.ReadAsStringAsync();
-					context.Logger.LogLine($"{response.StatusCode}:{responseContentText}");
+					using (var content = new StringContent(postJson, Encoding.UTF8, "application/json"))
+					{
+						var requestContentText = await content.ReadAsStringAsync();
+						context.Logger.LogLine(requestContentText);
+						var response = await httpClient.PostAsync(eventData.SlackWebhookUrl, content);
+						var responseContentText = await response.Content.ReadAsStringAsync();
+						context.Logger.LogLine($"{response.StatusCode}:{responseContentText}");
+					}
 				}
 			}
+			else
+			{
+				postMessage = "2FA が無効のユーザはいません！セキュアデス！";
+				context.Logger.LogLine("2FA が無効のユーザがいないため、 Slack へのポストは行いません。");
+			}
+
+			context.Logger.LogLine("PrEmergency finished!");
 
 			return postMessage;
 		}
