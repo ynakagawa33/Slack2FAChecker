@@ -62,6 +62,21 @@ namespace Slack2FAChecker
 		[JsonProperty("is_owner")]
 		public bool IsOwner { get; set; }
 
+		[JsonProperty("is_primary_owner")]
+		public bool IsPrimaryOwner { get; set; }
+
+		[JsonProperty("is_restricted")]
+		public bool IsRestricted { get; set; }
+
+		[JsonProperty("is_ultra_restricted")]
+		public bool IsUltraRestricted { get; set; }
+
+		[JsonProperty("is_bot")]
+		public bool IsBot { get; set; }
+
+		[JsonProperty("is_app_user")]
+		public bool IsAppUser { get; set; }
+
 		[JsonProperty("updated")]
 		public long UpdatedAt { get; set; }
 
@@ -85,6 +100,9 @@ namespace Slack2FAChecker
 
 		[JsonProperty("real_name")]
 		public string RealName { get; set; }
+
+		[JsonProperty("display_name")]
+		public string DisplayName { get; set; }
 
 		[JsonProperty("email")]
 		public string Email { get; set; }

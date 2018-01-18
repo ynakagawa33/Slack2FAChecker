@@ -12,7 +12,7 @@
 				{
 					DryRun = false,
 					SlackApiToken = "",
-					ExcludeUserNameCsv = "",
+					ExcludeDisplayNameCsv = "",
 					SlackWebhookUrl = ""
 			}, new DebugLambdaContext())
 				.Wait();

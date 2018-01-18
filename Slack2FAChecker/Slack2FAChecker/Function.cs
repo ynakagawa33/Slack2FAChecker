@@ -68,11 +68,14 @@ namespace Slack2FAChecker
 				}
 			}
 
-			var excludeUserNames = eventData.ExcludeUserNameCsv.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
+			var excludeDisplayNames = eventData.ExcludeDisplayNameCsv.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
 			var no2FaUserNames = members
-				.Where(member => member.Has2Fa == false && member.Deleted == false)
-				.Select(x => x.Name)
-				.Except(excludeUserNames)
+				.Where(member => member.IsBot == false)
+				.Where(member => member.IsAppUser == false)
+				.Where(member => member.Deleted == false)
+				.Where(member => member.Has2Fa == false)
+				.Select(x => x.Profile.DisplayName)
+				.Except(excludeDisplayNames)
 				.ToList();
 
 			string postMessage;

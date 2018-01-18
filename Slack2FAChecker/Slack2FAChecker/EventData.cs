@@ -7,6 +7,6 @@
 		public string SlackWebhookUrl { get; set; }
 		public string SlackApiToken { get; set; }
 
-		public string ExcludeUserNameCsv { get; set; }
+		public string ExcludeDisplayNameCsv { get; set; }
 	}
 }
