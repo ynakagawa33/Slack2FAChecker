@@ -69,24 +69,44 @@ namespace Slack2FAChecker
 			}
 
 			var excludeDisplayNames = eventData.ExcludeDisplayNameCsv.Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries);
-			var no2FaUserNames = members
+			var no2FaMembers = members
 				.Where(member => member.IsBot == false)
 				.Where(member => member.IsAppUser == false)
 				.Where(member => member.Deleted == false)
 				.Where(member => member.Has2Fa == false)
-				.Select(x => x.Profile.DisplayName)
-				.Except(excludeDisplayNames)
+				.Where(member => !excludeDisplayNames.Contains(member.Profile.DisplayName))
 				.ToList();
 
-			string postMessage;
-			if (no2FaUserNames.Any())
+			string postJson;
+			if (no2FaMembers.Any())
 			{
-				postMessage = "2FA 無効ユーザ" + Environment.NewLine + string.Join(",", no2FaUserNames);
+				var attachments = new List<dynamic>();
+				foreach (var no2FaMember in no2FaMembers)
+					attachments.Add(new
+					{
+						fields = new[]
+						{
+							new
+							{
+								title = "DisplayName",
+								value = !string.IsNullOrEmpty(no2FaMember.Profile.DisplayName) ? no2FaMember.Profile.DisplayName : "未設定",
+								@short = true
+							},
+							new
+							{
+								title = "Email",
+								value = !string.IsNullOrEmpty(no2FaMember.Profile.Email) ? no2FaMember.Profile.Email : "未設定",
+								@short = true
+							}
+						},
+						mrkdwn_in = new[] {"fields"}
+					});
 				using (var httpClient = new HttpClient())
 				{
-					var postJson = JsonConvert.SerializeObject(new
+					postJson = JsonConvert.SerializeObject(new
 					{
-						text = postMessage
+						text = "2FA 無効ユーザ一覧",
+						attachments
 					});
 
 					using (var content = new StringContent(postJson, Encoding.UTF8, "application/json"))
@@ -101,13 +121,16 @@ namespace Slack2FAChecker
 			}
 			else
 			{
-				postMessage = "2FA が無効のユーザはいません！セキュアデス！";
+				postJson = JsonConvert.SerializeObject(new
+				{
+					text = "2FA が無効のユーザはいません！セキュアデス！"
+				});
 				context.Logger.LogLine("2FA が無効のユーザがいないため、 Slack へのポストは行いません。");
 			}
 
 			context.Logger.LogLine("PrEmergency finished!");
 
-			return postMessage;
+			return postJson;
 		}
 	}
 }
