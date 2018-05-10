@@ -16,5 +16,6 @@
     "function-handler"     : "Slack2FAChecker::Slack2FAChecker.Function::FunctionHandler",
     "function-name"        : "Slack2FAChecker",
     "function-role"        : "arn:aws:iam::439023032515:role/lambda_basic_execution",
-    "environment-variables" : ""
+    "environment-variables" : "",
+    "tracing-mode"          : "PassThrough"
 }
