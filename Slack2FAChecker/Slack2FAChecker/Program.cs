@@ -10,7 +10,6 @@
 			// use custom LambdaContext to access local context logger
 			new Function().FunctionHandler(new EventData
 				{
-					DryRun = false,
 					SlackApiToken = "",
 					ExcludeDisplayNameCsv = "",
 					SlackWebhookUrl = ""
